@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前世人物志｜趣味性格测试</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"KaiTi","STKaiti",serif;}
+body{background:#f8f5ee;color:#443b30;padding:20px;line-height:1.7;}
+.container{max-width:700px;margin:0 auto;background:#fffdf8;border:1px solid #e2d9cc;border-radius:12px;padding:30px;box-shadow:0 2px 12px #e9e2d6;}
+.title{text-align:center;font-size:28px;color:#6b4f38;margin-bottom:8px;}
+.subtitle{text-align:center;color:#8c7864;margin-bottom:30px;}
+.question{margin-bottom:24px;display:none;}
+.question.active{display:block;}
+.q-title{font-size:18px;margin-bottom:16px;color:#544436;}
+.opt{border:1px solid #ddd2c3;border-radius:8px;padding:14px;margin-bottom:12px;cursor:pointer;transition:0.2s;}
+.opt:hover{background:#f3ece0;border-color:#c9b8a3;}
+.opt.selected{background:#e9ddcc;border-color:#a88c6c;}
+.btn-wrap{text-align:center;margin-top:30px;}
+button{padding:12px 28px;background:#8c6c4e;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;}
+button:disabled{background:#b8a896;cursor:not-allowed;}
+.result-box{display:none;text-align:center;}
+.card{border:1px solid #d9c9b6;border-radius:12px;padding:26px;background:#fff9ef;margin-top:20px;}
+.card h3{font-size:24px;color:#704f34;margin-bottom:10px;}
+.card .desc{color:#5a4c3f;text-align:left;margin-top:16px;}
+.progress{color:#998877;text-align:center;margin-bottom:20px;}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 class="title">前世人物志</h1>
+  <p class="subtitle">一场古风性格小测，看看你是哪位古人</p >
+  <div class="progress" id="progress"></div>
+
+  <div id="questions">
+    <div class="question active" data-q="1">
+      <div class="q-title">1. 闲暇之时，你更愿意？</div>
+      <div class="opt" data-val="A">A 独坐看书品茶，不喜喧闹</div>
+      <div class="opt" data-val="B">B 约知己好友，把酒闲谈</div>
+      <div class="opt" data-val="C">C 出门游历山水，看遍风物</div>
+      <div class="opt" data-val="D">D 打理琐事，规划好往后的日子</div>
+    </div>
+
+    <div class="question" data-q="2">
+      <div class="q-title">2. 遇到困境，你通常会？</div>
+      <div class="opt" data-val="A">A 冷静内省，独自慢慢消化</div>
+      <div class="opt" data-val="B">B 找人倾诉，寻求陪伴安慰</div>
+      <div class="opt" data-val="C">C 迎难而上，主动寻找破局办法</div>
+      <div class="opt" data-val="D">D 权衡利弊，保守稳妥行事</div>
+    </div>
+
+    <div class="question" data-q="3">
+      <div class="q-title">3. 与人相处，你更偏向？</div>
+      <div class="opt" data-val="A">A 保持距离，君子之交淡如水</div>
+      <div class="opt" data-val="B">B 重情重义，愿意为友人付出</div>
+      <div class="opt" data-val="C">C 坦荡直率，好恶写在眉眼之间</div>
+      <div class="opt" data-val="D">D 温和包容，尽量照顾所有人感受</div>
+    </div>
+
+    <div class="question" data-q="4">
+      <div class="q-title">4. 人生你更看重？</div>
+      <div class="opt" data-val="A">A 内心安宁，精神自足</div>
+      <div class="opt" data-val="B">B 情义相伴，人间烟火</div>
+      <div class="opt" data-val="C">C 抱负理想，不负此生</div>
+      <div class="opt" data-val="D">D 安稳长久，岁月平和</div>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button id="nextBtn" disabled>下一题</button>
+  </div>
+
+  <div class="result-box" id="resultWrap">
+    <h2>你的前世人物</h2>
+    <div class="card">
+      <h3 id="personName"></h3>
+      <p id="personTag"></p >
+      <div class="desc" id="personDesc"></div>
+    </div>
+    <div class="btn-wrap" style="margin-top:24px;">
+      <button onclick="restartTest()">重新测试</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const resultMap = {
+  A:{
+    name:"陶渊明",
+    tag:"淡泊隐士｜守心自洽",
+    desc:"你偏爱清净，不喜俗世纷扰。内心丰盈，懂得取舍，不愿勉强自己周旋于繁杂人情。不追逐浮华，更向往自在安然的生活，守一方小天地，自得其乐。"
+  },
+  B:{
+    name:"李白",
+    tag:"浪漫诗仙｜热忱重情",
+    desc:"性情热烈，重情义，热爱自由。心中藏浪漫，待人真诚坦荡。快意随心，讨厌拘束，愿意为知己倾心相交，一生热爱人间风月。"
+  },
+  C:{
+    name:"苏轼",
+    tag:"豁达智者｜百折不挠",
+    desc:"心胸开阔，逆境中也能寻得乐趣。遇事乐观通透，既能入世做事，也能随遇而安。见识广博，包容力强，风雨之中依旧保有热爱。"
+  },
+  D:{
+    name:"李清照",
+    tag:"细腻慧心｜温柔坚韧",
+    desc:"心思细腻敏锐，共情力强。外表温和，内里有风骨。擅长体察周遭，做事审慎稳妥，看似柔软，遇到大事时自有一份坚韧。"
+  }
+};
+
+let currentQ = 1;
+const totalQ = 4;
+let answer = {};
+
+const qList = document.querySelectorAll(".question");
+const nextBtn = document.getElementById("nextBtn");
+const progressDom = document.getElementById("progress");
+const resultWrap = document.getElementById("resultWrap");
+
+document.querySelectorAll(".opt").forEach(opt=>{
+  opt.onclick = function(){
+    const q = this.parentElement.dataset.q;
+    const val = this.dataset.val;
+    answer[q] = val;
+    this.parentElement.querySelectorAll(".opt").forEach(o=>o.classList.remove("selected"));
+    this.classList.add("selected");
+    nextBtn.disabled = false;
+  }
+})
+
+nextBtn.onclick = function(){
+  qList[currentQ-1].classList.remove("active");
+  currentQ++;
+  if(currentQ>totalQ){
+    showResult();
+    return;
+  }
+  qList[currentQ-1].classList.add("active");
+  nextBtn.disabled = true;
+  updateProgress();
+}
+
+function updateProgress(){
+  progressDom.innerText = `第${currentQ}/${totalQ}题`;
+}
+
+function showResult(){
+  let count={A:0,B:0,C:0,D:0};
+  Object.values(answer).forEach(v=>count[v]++);
+  let maxKey = "A";
+  for(let k in count){
+    if(count[k]>count[maxKey]) maxKey = k;
+  }
+  const res = resultMap[maxKey];
+  document.getElementById("personName").innerText = res.name;
+  document.getElementById("personTag").innerText = res.tag;
+  document.getElementById("personDesc").innerText = res.desc;
+
+  document.getElementById("questions").style.display="none";
+  nextBtn.style.display="none";
+  resultWrap.style.display="block";
+}
+
+function restartTest(){
+  currentQ=1;
+  answer={};
+  document.querySelectorAll(".opt").forEach(o=>o.classList.remove("selected"));
+  document.getElementById("questions").style.display="block";
+  nextBtn.style.display="inline-block";
+  resultWrap.style.display="none";
+  qList.forEach(q=>q.classList.remove("active"));
+  qList[0].classList.add("active");
+  nextBtn.disabled=true;
+  updateProgress();
+}
+updateProgress();
+</script>
+</body>
+</html>
